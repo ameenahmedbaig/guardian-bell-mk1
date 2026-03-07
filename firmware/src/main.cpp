@@ -129,12 +129,11 @@ void activateSurveillance() {
         mcp.digitalWrite(RED_LED_PIN, HIGH);
 
         // --- capture & save image to SD card every second ---
-        captureAndSaveImage();
+        captureAndSaveImage(getCurrentDateTime());
         mcp.digitalWrite(RED_LED_PIN, LOW);
 
         // --- check if rung ---
         ringIfRung();
-        mcp.digitalWrite(BUZZER_PIN, LOW);
     }
 
     // --- reset last action endtime to current time ---
@@ -238,8 +237,6 @@ void setup() {
     mcp.digitalWrite(RED_LED_PIN, LOW);
     mcp.digitalWrite(BUZZER_PIN, LOW);
 
-    //error("For testing (not an error)");
-
     // --- configure pin as a source to wake when goes HIGH ---
     esp_sleep_enable_ext0_wakeup((gpio_num_t)WAKE_PIN, 1);
 
@@ -251,6 +248,9 @@ void setup() {
 
         // --- sync time & initialise PIR if woke from power on ---
         case ESP_SLEEP_WAKEUP_UNDEFINED:
+            mcp.digitalWrite(BUZZER_PIN, HIGH);
+            delay(300);
+            mcp.digitalWrite(BUZZER_PIN, LOW);
             DBG_PRINTLN("Cold boot");
             checkForFirmwareUpdate();
             initTime();
@@ -260,7 +260,6 @@ void setup() {
         // --- activate surveillance immediately if woke from wake source ---
         case ESP_SLEEP_WAKEUP_EXT0:
             DBG_PRINTLN("Wakeup by PIR");
-            mcp.digitalWrite(BUZZER_PIN, HIGH);
             activateSurveillance();
             motionDectctionCount++;
             break;

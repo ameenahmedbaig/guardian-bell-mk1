@@ -14,9 +14,11 @@ To define your secret credentials:
 
 // === OTA firmware update URLs ===
 // --- URL pointing to remote firmware version ---
-const char* OTA_VERSION_URL_EXAMPLE     = "https://github.com/<user>/<repo>/releases/latest/download/version.txt";
+const char* OTA_VERSION_URL_EXAMPLE         = "https://github.com/<user>/<repo>/releases/latest/download/version.txt";
+// --- URL pointing to firmware update notes ---
+const char* OTA_UPDATE_NOTES_URL_EXAMPLE    = "https://github.com/<user>/<repo>/releases/latest/download/update_notes.txt";
 // --- URL pointing to remote fimware download ---
-const char* OTA_FIRMWARE_URL_EXAMPLE    = "https://github.com/<user>/<repo>/releases/latest/download/firmware.bin";
+const char* OTA_FIRMWARE_URL_EXAMPLE        = "https://github.com/<user>/<repo>/releases/latest/download/firmware.bin";
 
 
 // === Wi-Fi ===

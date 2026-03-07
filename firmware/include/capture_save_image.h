@@ -2,4 +2,4 @@
 #include <Arduino.h>
 #include "time_util.h"
 
-void captureAndSaveImage(String filename = getCurrentDateTime());
+void captureAndSaveImage(String filename);

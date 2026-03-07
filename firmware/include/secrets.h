@@ -2,6 +2,8 @@
 
 extern const char* OTA_VERSION_URL;
 
+extern const char* OTA_UPDATE_NOTES_URL;
+
 extern const char* OTA_FIRMWARE_URL;
 
 extern const char* WIFI_SSID;

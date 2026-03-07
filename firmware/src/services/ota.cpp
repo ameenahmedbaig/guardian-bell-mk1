@@ -41,12 +41,13 @@ static String fetchRemoteFirmwareVersion() {
     
     HTTPClient http;
     http.begin(otaClient, OTA_VERSION_URL);
-
     http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
 
     int code = http.GET();
+
     DBG_PRINT("HTTP code (version): "); 
     DBG_PRINTLN(code);
+
     if (code != HTTP_CODE_OK) {
         error("OTA firmware version fetch failed", false);
         http.end();
@@ -57,11 +58,45 @@ static String fetchRemoteFirmwareVersion() {
     version.trim();
 
     http.end();
+
     return version;
 }
 
+
+// === fetch update notes for the latest version of the remote firmware ===
+static String fetchUpdateNotes() {
+    otaClient.setInsecure();
+
+    HTTPClient http;
+    http.begin(otaClient, OTA_UPDATE_NOTES_URL);
+
+    http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+
+    int code = http.GET();
+
+    DBG_PRINT("HTTP code (notes): ");
+    DBG_PRINTLN(code);
+
+    if (code != HTTP_CODE_OK) {
+        DBG_PRINTLN("Failed to fetch update notes");
+        http.end();
+        return "";
+    }
+
+    String notes = http.getString();
+    notes.trim();
+
+    http.end();
+
+    return notes;
+}
+
+
 // === flash firmware OTA ===
 void performFirmwareUpdateOTA(String rmtVersion) {
+    // --- get update notes ---
+    String updateNotes = fetchUpdateNotes();
+
     // --- skip certificate validation ---
     otaClient.setInsecure();
     
@@ -106,6 +141,9 @@ void performFirmwareUpdateOTA(String rmtVersion) {
 
     // --- notify firmware update sucess via telegram ---
     sendMsgToTelegram("Firmware updated sucessfully from " + FW_VERSION + " to " + rmtVersion);
+
+    // --- send firmware update notes via telegram ---
+    sendMsgToTelegram("GuardianBell" + rmtVersion + ":\n" + updateNotes);
     
     http.end();
 

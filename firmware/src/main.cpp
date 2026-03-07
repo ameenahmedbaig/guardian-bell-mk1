@@ -91,12 +91,14 @@ bool warnedTwice = false;
 // --- ring if doorbell rung ---
 void ringIfRung(unsigned long checkDuration = 100) {
 
-    // --- check if active-low button pressed for checkDuration ---
-    unsigned long checkDuration_startTime = millis();
-    while (millis() - checkDuration_startTime < checkDuration) {
+    // --- check state of active-low button ---
+    static bool lastState = HIGH;
+    bool currentState = mcp.digitalRead(BTN_PIN);
+
+    if (lastState == HIGH && currentState == LOW) {
 
         // --- if button pushed & allowed time since last ring has passed ---
-        if (mcp.digitalRead(BTN_PIN) == LOW && millis() - lastRing_endTime > timeSince_lastRing) {
+        if (millis() - lastRing_endTime > timeSince_lastRing) {
             DBG_PRINTLN("Bell rung!");
             
             // --- connect to MQTT & notify MQTT that doorbell was rung ---
@@ -114,6 +116,8 @@ void ringIfRung(unsigned long checkDuration = 100) {
             lastAction_endTime = millis();
         }
     }
+
+    lastState = currentState;
 }
 
 

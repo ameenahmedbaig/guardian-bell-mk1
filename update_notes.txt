@@ -1,3 +1,1 @@
-- add firmware update notes sent to user via telegram
-- remove buzzer beep on PIR wake
-- add buzzer beep on device power on
+- improved doorbell trigger responsiveness

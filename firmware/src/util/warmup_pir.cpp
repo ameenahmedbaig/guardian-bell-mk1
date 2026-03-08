@@ -17,7 +17,7 @@ void warmUpPIR() {
     unsigned long startMs = millis();
 
     // --- delay with led blink visual indication ---
-    while (millis() - startMs < warmUpPIR_period) {
+    while (millis() - startMs < warmUpPeriod) {
         mcp.digitalWrite(BLUE_LED_PIN, HIGH);
         delay(500);
         mcp.digitalWrite(BLUE_LED_PIN, LOW);
@@ -25,5 +25,5 @@ void warmUpPIR() {
     }
 
     // --- reset last action endtime to current time ---
-    lastAction_endTime = millis();
+    lastActionTime = millis();
 }

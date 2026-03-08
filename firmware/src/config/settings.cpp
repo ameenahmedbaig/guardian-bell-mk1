@@ -4,7 +4,7 @@
 
 
 // === firmware version ===
-const String FW_VERSION = "v1.0.0-beta.2.8";
+const String FW_VERSION = "v1.0.0-beta.2.9";
 
 
 // === acceptable number of motion detections in one boot ===
@@ -47,10 +47,10 @@ bool imagesLeftToUpload = true;
 const unsigned long surveillancePeriod      = 30000;
 
 // --- time allowed to warm up PIR sensor ---
-const unsigned long warmUpPIR_period        = 20000;
+const unsigned long warmUpPeriod            = 20000;
 
 // --- allowed standby duration ---
 const unsigned long allowedStandbyDuration  = 60000;
 
 // --- minimum time to pass since last ring ---
-const unsigned long timeSince_lastRing      = 2000;
+const unsigned long timeSinceLastRing       = 2000;

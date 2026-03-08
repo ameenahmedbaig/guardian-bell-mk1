@@ -2,10 +2,13 @@
 #include <Arduino.h>
 
 // === ESP32-CAM pin configuration ===
-// flash LED onboard the ESP32-CAM
+// -- button input --
+const int BTN_ESP_PIN = 3;
+
+// -- flash LED onboard the ESP32-CAM --
 const int FLASH_LED_PIN = 4;
 
-// source pin to wake ESP32-CAM from deep-sleep
+// -- source pin to wake ESP32-CAM from deep-sleep --
 const int WAKE_PIN = 4;
 
 // --- I2C SCL to MCP23X17 ---
@@ -34,7 +37,7 @@ const int SDA_PIN = 13;
 
 // === MCP23017 configuration ===
 // --- input sources ---
-const int BTN_PIN = 0;          // push button input
+const int BTN_MCP_PIN = 0;      // push button input
 const int PIR_PIN = 1;          // PIR input
 
 // --- peripherals ---

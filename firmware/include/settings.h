@@ -26,14 +26,14 @@ extern const int UPLOAD_END_HOUR;
 
 extern bool imagesLeftToUpload;
 
-extern unsigned long lastAction_endTime;
+extern unsigned long lastActionTime;
 
-extern unsigned long lastRing_endTime;
+extern unsigned long lastRingTime;
 
 extern const unsigned long surveillancePeriod;
 
-extern const unsigned long warmUpPIR_period;
+extern const unsigned long warmUpPeriod;
 
 extern const unsigned long allowedStandbyDuration;
 
-extern const unsigned long timeSince_lastRing; 
+extern const unsigned long timeSinceLastRing; 

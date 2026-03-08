@@ -78,7 +78,7 @@ static String fetchUpdateNotes() {
     DBG_PRINTLN(code);
 
     if (code != HTTP_CODE_OK) {
-        DBG_PRINTLN("Failed to fetch update notes");
+        error("OTA firmware update notes fetch failed", false);
         http.end();
         return "";
     }

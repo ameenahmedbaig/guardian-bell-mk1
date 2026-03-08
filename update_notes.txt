@@ -1,1 +1,1 @@
-- improved doorbell trigger responsiveness
+- further improved doorbell trigger responsiveness

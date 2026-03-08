@@ -71,14 +71,20 @@
 
 
 // === global variables with default values set ===
+// -- time at end of last interrupt --
+unsigned long lastInterruptTime = 0; 
+
 // --- time at end of last action ---
-unsigned long lastAction_endTime    = 0;
+unsigned long lastActionTime    = 0;
 
 // --- time at end of last ring ---
-unsigned long lastRing_endTime      = 0;
+unsigned long lastRingTime      = 0;
 
 // --- number of motion detections ---
 int motionDectctionCount = 0;
+
+// --- to check doorbell interrupt ---
+volatile bool doorbellInterrupted = false; 
 
 // --- to check if warned once ---
 bool warnedOnce = false;
@@ -87,18 +93,50 @@ bool warnedOnce = false;
 bool warnedTwice = false;
 
 
+// === push button interrupt ===
+void IRAM_ATTR handleButtonInterrupt() { 
+    //unsigned long start = millis();
+
+    // --- interrupt debounce ---
+    //if (start - lastInterruptTime > 200) {
+        doorbellInterrupted = true;
+    //    lastInterruptTime = start;
+    //}
+}
+
+
 // === ring ===
 // --- ring if doorbell rung ---
-void ringIfRung(unsigned long checkDuration = 100) {
+void ringIfRung() {
+    bool shouldRing = false;
 
-    // --- check state of active-low button ---
-    static bool lastState = HIGH;
-    bool currentState = mcp.digitalRead(BTN_PIN);
+    // --- poll the MCP button pin if serial debugging ON ---
+    #if SERIAL_DEBUG
+        // --- check state of active-low button ---
+        static bool lastState = HIGH;
+        bool currentState = mcp.digitalRead(BTN_MCP_PIN);
 
-    if (lastState == HIGH && currentState == LOW) {
+        // --- if button pushed prepare to ring ---
+        if (lastState == HIGH && currentState == LOW) {
+            shouldRing = true;
+        }
+
+        lastState = currentState;
+
+    // --- else check the interrupt flag set by the ESP button pin ---
+    #else
+        if (doorbellInterrupted) {
+            shouldRing = true;
+        }
+    #endif
+
+    if (shouldRing) {
+
+        // --- reset the interrupt flag ---
+        doorbellInterrupted = false;
 
         // --- if button pushed & allowed time since last ring has passed ---
-        if (millis() - lastRing_endTime > timeSince_lastRing) {
+        if (millis() - lastRingTime > timeSinceLastRing) {
             DBG_PRINTLN("Bell rung!");
             
             // --- connect to MQTT & notify MQTT that doorbell was rung ---
@@ -112,12 +150,11 @@ void ringIfRung(unsigned long checkDuration = 100) {
             sendImageToTelegram();
 
             // --- reset last ring endtime & last action endtime to current time ---
-            lastRing_endTime = millis();
-            lastAction_endTime = millis();
+            lastRingTime = millis();
+            lastActionTime = millis();
         }
     }
 
-    lastState = currentState;
 }
 
 
@@ -141,7 +178,7 @@ void activateSurveillance() {
     }
 
     // --- reset last action endtime to current time ---
-    lastAction_endTime = millis();
+    lastActionTime = millis();
 }
 
 
@@ -153,7 +190,7 @@ bool uploadAndDeleteAll() {
     File root = SD_MMC.open("/");
     if (!root || !root.isDirectory()) {
         DBG_PRINTLN("ERROR: SD root open failed");
-        lastAction_endTime = millis();
+        lastActionTime = millis();
         return true;
     }
 
@@ -181,14 +218,14 @@ bool uploadAndDeleteAll() {
         }
         else {
             DBG_PRINTLN("Upload failed, stopping uploads");
-            lastAction_endTime = millis();
+            lastActionTime = millis();
             return true;
         }
 
         // --- stop if motion detected ---
         if (mcp.digitalRead(PIR_PIN) == HIGH) {
             DBG_PRINTLN("Motion detected, stopping uploads");
-            lastAction_endTime = millis();
+            lastActionTime = millis();
             return true;
         }
 
@@ -199,7 +236,7 @@ bool uploadAndDeleteAll() {
 
     // --- reset last action endtime to current time & finish uploading ---
     DBG_PRINTLN("No images left to upload");
-    lastAction_endTime = millis();
+    lastActionTime = millis();
     return false;
 }
 
@@ -214,11 +251,23 @@ void setup() {
     // --- record time at start of boot ---
     unsigned long boot_startTime = millis(); 
 
-    // --- begin debug serial ---
-    DBG_SERIAL_BEGIN(115200);
-
-    // --- initialise hardware ---
+    // --- initialise MCP23017 as GPIO expander ---
     initMCP();
+
+    // --- if serial debugging begin debug serial & set button pinmode on the MCP23017 ---
+    #if SERIAL_DEBUG
+        Serial.begin(115200);
+
+        mcp.pinMode(BTN_MCP_PIN, INPUT_PULLUP);
+
+    // --- else set button pinmode on the ESP32-CAM ---
+    #else
+        pinMode(BTN_ESP_PIN, INPUT_PULLUP); 
+    
+        attachInterrupt(digitalPinToInterrupt(BTN_ESP_PIN), handleButtonInterrupt, FALLING);
+    #endif
+
+    // --- initialise camera and micro SD card ---
     initCamera();
     initMicroSD();
 
@@ -232,7 +281,6 @@ void setup() {
     mcp.pinMode(BLUE_LED_PIN, OUTPUT);
     mcp.pinMode(RED_LED_PIN, OUTPUT);
     mcp.pinMode(BUZZER_PIN, OUTPUT);
-    mcp.pinMode(BTN_PIN, INPUT_PULLUP);
     mcp.pinMode(PIR_PIN, INPUT);
     pinMode(WAKE_PIN, INPUT_PULLDOWN);
 
@@ -324,7 +372,7 @@ void loop() {
         imagesLeftToUpload = uploadAndDeleteAll();
     }
     // --- if maximum allowed standby duration has passed ---
-    else if (millis() - lastAction_endTime >= allowedStandbyDuration) {
+    else if (millis() - lastActionTime >= allowedStandbyDuration) {
         DBG_PRINTLN("ESP32-CAM entering deep sleep");
         DBG_DELAY(1000);
 

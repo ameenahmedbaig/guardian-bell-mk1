@@ -9,6 +9,9 @@
 // --- hardware ---
 #include "mcp23017.h"
 
+// --- util ---
+#include "wipe_sd_card.h"
+
 
 // === blocking delay to warm up PIR sensor & get stable readings ===
 void warmUpPIR() {
@@ -19,6 +22,7 @@ void warmUpPIR() {
     // --- delay with led blink visual indication ---
     while (millis() - startMs < warmUpPeriod) {
         mcp.digitalWrite(BLUE_LED_PIN, HIGH);
+        deleteAll();
         delay(500);
         mcp.digitalWrite(BLUE_LED_PIN, LOW);
         delay(500);

@@ -4,7 +4,7 @@
 
 
 // === firmware version ===
-const String FW_VERSION = "v1.0.0-beta.2.9";
+const String FW_VERSION = "v1.0.0-beta.3.0";
 
 
 // === acceptable number of motion detections in one boot ===
@@ -18,7 +18,7 @@ const int   daylightOffset_sec = 3600;
 
 
 // === filename of image captured at latest doorbell ring ===
-const String latestRingCapture_filename = "latest_ring_capture";
+const String lastRingCaptureFilename = "latest_ring_capture";
 
 
 // === telegram ===
@@ -44,7 +44,7 @@ bool imagesLeftToUpload = true;
 
 // === time variables ===
 // --- allowed suveillance duration ---
-const unsigned long surveillancePeriod      = 30000;
+const unsigned long surveillancePeriod      = 15000;
 
 // --- time allowed to warm up PIR sensor ---
 const unsigned long warmUpPeriod            = 20000;

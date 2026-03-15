@@ -68,6 +68,8 @@
 #include "security_alarm.h"
 #include "warmup_pir.h"
 #include "capture_save_image.h"
+#include "button_interrupt.h"
+#include "wipe_sd_card.h"
 
 
 // === global variables with default values set ===
@@ -83,26 +85,11 @@ unsigned long lastRingTime      = 0;
 // --- number of motion detections ---
 int motionDectctionCount = 0;
 
-// --- to check doorbell interrupt ---
-volatile bool doorbellInterrupted = false; 
-
 // --- to check if warned once ---
 bool warnedOnce = false;
 
 // --- to check if warned twice ---
 bool warnedTwice = false;
-
-
-// === push button interrupt ===
-void IRAM_ATTR handleButtonInterrupt() { 
-    //unsigned long start = millis();
-
-    // --- interrupt debounce ---
-    //if (start - lastInterruptTime > 200) {
-        doorbellInterrupted = true;
-    //    lastInterruptTime = start;
-    //}
-}
 
 
 // === ring ===
@@ -143,8 +130,8 @@ void ringIfRung() {
             ensureMQTT();
             mqtt.publish("doorbell/ring", "pressed");
 
-            // --- capture & save image as last ring capture (overwrite) ---
-            captureAndSaveImage(latestRingCapture_filename);
+            // --- capture & save image as last ring capture ---
+            captureAndSaveImage(lastRingCaptureFilename);
 
             // --- send this image to telegram ---
             sendImageToTelegram();
@@ -201,9 +188,9 @@ bool uploadAndDeleteAll() {
     while (file) {
         delay(100);
 
-        // --- skip folders, non-JPEGs & the latest ring capture ---
+        // --- skip folders, non-JPEGs & the last ring capture ---
         String filename = file.name();
-        if (file.isDirectory() || !filename.endsWith(".jpg") || filename == "IMG_" + latestRingCapture_filename + ".jpg") {
+        if (file.isDirectory() || !filename.endsWith(".jpg") || filename == "IMG_" + lastRingCaptureFilename + ".jpg") {
             file = root.openNextFile();
             continue;
         }
@@ -348,6 +335,13 @@ void loop() {
     // --- notify user if motion detections exceed suspicious activity threshold ---
     if (motionDectctionCount > acceptableDetections && !warnedOnce) {
         sendMsgToTelegram("⚠️ Suspicious activity near your door!");
+        
+        // --- capture & save image ---
+        captureAndSaveImage(lastRingCaptureFilename);
+
+        // --- send this image to telegram ---
+        sendImageToTelegram();
+
         warnedOnce = true;
     }
 

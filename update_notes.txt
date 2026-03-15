@@ -1,1 +1,1 @@
-- further improved doorbell trigger responsiveness
+- added functionality to wipe sd card data manually on device

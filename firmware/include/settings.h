@@ -12,7 +12,7 @@ extern const long  gmtOffset_sec;
 
 extern const int   daylightOffset_sec;
 
-extern const String latestRingCapture_filename;
+extern const String lastRingCaptureFilename;
 
 extern const char* telegramHost;
 

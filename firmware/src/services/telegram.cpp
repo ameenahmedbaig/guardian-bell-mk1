@@ -65,7 +65,7 @@ void sendImageToTelegram() {
     telegramClient.setInsecure();
 
     // --- open latest ring capture JPEG ---
-    File file = SD_MMC.open("/IMG_" + latestRingCapture_filename + ".jpg");
+    File file = SD_MMC.open("/IMG_" + lastRingCaptureFilename + ".jpg");
     if (!file) {
         error("Failed to open JPEG file", false);
     }

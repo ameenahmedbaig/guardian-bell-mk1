@@ -6,42 +6,42 @@ To define your secret credentials:
     4. Include "settings.h" header file
 */
 
-// === uncomment the following ===
-// === project headers ===
-// --- corresponding header ---
+/// === uncomment the following ===
+/// === project headers ===
+/// --- corresponding header ---
 //#include "settings.h"
 
 
-// === OTA firmware update URLs ===
-// --- URL pointing to remote firmware version ---
+/// === OTA firmware update URLs ===
+/// --- URL pointing to remote firmware version ---
 const char* OTA_VERSION_URL_EXAMPLE         = "https://github.com/<user>/<repo>/releases/latest/download/version.txt";
-// --- URL pointing to firmware update notes ---
+/// --- URL pointing to firmware update notes ---
 const char* OTA_UPDATE_NOTES_URL_EXAMPLE    = "https://github.com/<user>/<repo>/releases/latest/download/update_notes.txt";
-// --- URL pointing to remote fimware download ---
+/// --- URL pointing to remote fimware download ---
 const char* OTA_FIRMWARE_URL_EXAMPLE        = "https://github.com/<user>/<repo>/releases/latest/download/firmware.bin";
 
 
-// === Wi-Fi ===
+/// === Wi-Fi ===
 const char* WIFI_SSID_EXAMPLE   = "YOUR_WIFI_NAME";
 const char* WIFI_PASS_EXAMPLE   = "YOUR_WIFI_PASSWORD";
 
 
-// === MQTT ===
-// --- MQTT host (home assistant) ---
+/// === MQTT ===
+/// --- MQTT host (home assistant) ---
 const char* MQTT_HOST_EXAMPLE   = "HOME_ASSISTANT_IP";
 const int   MQTT_PORT_EXAMPLE   = 1883;
 
-// --- credentials of home assistant user: MQTT ---
+/// --- credentials of home assistant user: MQTT ---
 const char* MQTT_USER_EXAMPLE   = "USERNAME";
 const char* MQTT_PASS_EXAMPLE   = "PASSWORD";
 
 
-// === telegram ===
+/// === telegram ===
 const char* TELEGRAM_BOT_TOKEN_EXAMPLE  = "YOUR_BOT_TOKEN";
 const char* TELEGRAM_CHAT_ID_EXAMPLE    = "YOUR_CHAT_ID";
 
 
-// === cloudinary ===
+/// === cloudinary ===
 const char* CLOUDINARY_CLOUD_NAME_EXAMPLE       = "YOUR_CLOUD_NAME";
 const char* CLOUDINARY_UPLOAD_PRESET_EXAMPLE    = "YOUR_UPLOAD_PRESET";
 

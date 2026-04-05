@@ -1,70 +1,70 @@
-// === standard headers ===
-// --- SD card access via SD_MMC interface ---
+/// === standard headers ===
+/// --- SD card access via SD_MMC interface ---
 #include <SD_MMC.h>
 
-// --- HTTP client for REST requests / file download ---
+/// --- HTTP client for REST requests / file download ---
 #include <HTTPClient.h>
 
 
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "telegram.h"
 
-// --- secrets_example.h for reference ---
+/// --- secrets_example.h for reference ---
 #include "secrets.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "settings.h"
 
-// --- network ---
+/// --- network ---
 #include "wifi.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 #include "error.h"
 
 
-// === WIFI client setup ===
+/// === WIFI client setup ===
 WiFiClientSecure telegramClient;
 
 
-// === send error message to telegram ===
+/// === send error message to telegram ===
 void sendMsgToTelegram(const String& msg) {
-    // --- ensure active WiFi connection ---
+    /// --- ensure active WiFi connection ---
     initWifi();
 
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     telegramClient.setInsecure();
 
-    // --- URL endpoint ---
+    /// --- URL endpoint ---
     String url =
         "/bot" + String(TELEGRAM_BOT_TOKEN) +
         "/sendMessage?chat_id=" + String(TELEGRAM_CHAT_ID) +
         "&text=" + msg;
 
-    // --- connect to telegram ---
+    /// --- connect to telegram ---
     if (!telegramClient.connect(telegramHost, 443)) {
         DBG_PRINTLN("ERROR: Telegram error notify failed");
         return;
     }
 
-    // --- simple GET ---
+    /// --- simple GET ---
     telegramClient.print(
         "GET " + url + " HTTP/1.1\r\n"
         "Host: " + String(telegramHost) + "\r\n"
         "Connection: close\r\n\r\n"
     );
 
-    // --- stop client ---
+    /// --- stop client ---
     telegramClient.stop();
 }
 
 
 void sendImageToTelegram(String caption) {
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     telegramClient.setInsecure();
 
-    // --- open latest ring capture JPEG ---
+    /// --- open latest ring capture JPEG ---
     File file = SD_MMC.open("/IMG_" + lastRingCaptureFilename + ".jpg");
     if (!file) {
         error("Failed to open JPEG file", false);
@@ -73,13 +73,13 @@ void sendImageToTelegram(String caption) {
         DBG_PRINTLN("Opened JPEG: " + String(file.name()));
     }
 
-    // --- URL endpoint ---
+    /// --- URL endpoint ---
     String url = "/bot" + String(TELEGRAM_BOT_TOKEN) + "/sendPhoto";
 
-    // --- multipart boundary ---
+    /// --- multipart boundary ---
     String boundary = "----ESP32CAMBoundary";
 
-    // --- build multipart body ---
+    /// --- build multipart body ---
     String head =
         "--" + boundary + "\r\n"
         "Content-Disposition: form-data; name=\"chat_id\"\r\n\r\n" +
@@ -93,13 +93,13 @@ void sendImageToTelegram(String caption) {
         "Content-Disposition: form-data; name=\"photo\"; filename=\"doorbell.jpg\"\r\n"
         "Content-Type: image/jpeg\r\n\r\n";
 
-    // --- build multipart tail ---
+    /// --- build multipart tail ---
     String tail = "\r\n--" + boundary + "--\r\n";
 
-    // --- determine total size of content ---
+    /// --- determine total size of content ---
     uint32_t totalLength = head.length() + file.size() + tail.length();
 
-    // --- connect to telegram ---
+    /// --- connect to telegram ---
     const char* telegramHost = "api.telegram.org";
     DBG_PRINTLN("Connecting to " + String(telegramHost));
     if (!telegramClient.connect(telegramHost, 443)) {
@@ -108,7 +108,7 @@ void sendImageToTelegram(String caption) {
         return;
     }
 
-    // --- send HTTP POST headers ---
+    /// --- send HTTP POST headers ---
     telegramClient.print(
         "POST " + url + " HTTP/1.1\r\n"
         "Host: " + String(telegramHost) + "\r\n"
@@ -117,10 +117,10 @@ void sendImageToTelegram(String caption) {
         "Connection: close\r\n\r\n"
     );
 
-    // --- send multipart head ---
+    /// --- send multipart head ---
     telegramClient.print(head);
 
-    // --- send file binary ---
+    /// --- send file binary ---
     uint8_t buf[1024];
     DBG_PRINTLN("Sending JPEG to telegram...");
     while (file.available()) {
@@ -128,13 +128,13 @@ void sendImageToTelegram(String caption) {
         telegramClient.write(buf, n);
     }
 
-    // --- send multipart tail ---
+    /// --- send multipart tail ---
     telegramClient.print(tail);
 
     // -- close file ---
     file.close();
 
-    // --- read telegram response ---
+    /// --- read telegram response ---
     DBG_PRINTLN("Telegram response:");
     while (telegramClient.connected()) {
         String line = telegramClient.readStringUntil('\n');
@@ -143,7 +143,7 @@ void sendImageToTelegram(String caption) {
     String body = telegramClient.readString();
     DBG_PRINTLN(body);
 
-    // --- stop client ---
+    /// --- stop client ---
     telegramClient.stop();
 
     DBG_PRINTLN("JPEG sent");

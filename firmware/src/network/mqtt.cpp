@@ -1,29 +1,29 @@
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "mqtt.h"
 
-// --- secrets_example.h for reference ---
+/// --- secrets_example.h for reference ---
 #include "secrets.h"
 
-// --- network ---
+/// --- network ---
 #include "wifi.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 #include "error.h"
 
 
-// === WIFI client setup ===
+/// === WIFI client setup ===
 WiFiClient wifiClient;
 
 
-// === MQTT Setup ===
+/// === MQTT Setup ===
 PubSubClient mqtt(wifiClient);
 
 
-// === ensure connection to MQTT  ===
+/// === ensure connection to MQTT  ===
 void ensureMQTT() {
-    // --- attempt to connect for 5 seconds ---
+    /// --- attempt to connect for 5 seconds ---
     unsigned long attemptConnection_startTime = millis();
     while (!mqtt.connected() && millis() - attemptConnection_startTime < 5000) {
         DBG_PRINTLN("Not connected to MQTT");

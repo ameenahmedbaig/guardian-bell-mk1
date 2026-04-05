@@ -1,31 +1,31 @@
-// === standard headers ===
-// --- WiFi connectivity ---
+/// === standard headers ===
+/// --- WiFi connectivity ---
 #include <WiFi.h>
 
 
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "wifi.h"
 
-// --- secrets_example.h for reference ---
+/// --- secrets_example.h for reference ---
 #include "secrets.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 #include "error.h"
 
 
-// === initialise Wi-Fi ===
+/// === initialise Wi-Fi ===
 void initWifi() {
-    // --- attempt connection if not connected ---
+    /// --- attempt connection if not connected ---
     if (WiFi.status() != WL_CONNECTED) {
         DBG_PRINT("Connecting to WiFi");
 
-        // --- begin WIFI connection ---
+        /// --- begin WIFI connection ---
         WiFi.mode(WIFI_STA);
         WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-        // --- check connection status for 5 seconds ---
+        /// --- check connection status for 5 seconds ---
         unsigned long checkConnection_startTime = millis();
         while (WiFi.status() != WL_CONNECTED && millis() - checkConnection_startTime < 5000) {
             delay(5);

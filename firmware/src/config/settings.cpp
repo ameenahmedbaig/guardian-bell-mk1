@@ -1,56 +1,56 @@
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "settings.h"
 
 
-// === firmware version ===
+/// === firmware version ===
 const String FW_VERSION = "v1.0.0-beta.3.2";
 
 
-// === acceptable number of motion detections in one boot ===
+/// === acceptable number of motion detections in one boot ===
 const int acceptableDetections = 20;
 
 
-// === time settings ===
+/// === time settings ===
 const char* ntpServer = "uk.pool.ntp.org";
 const long  gmtOffset_sec = 0;
 const int   daylightOffset_sec = 3600;
 
 
-// === filename of image captured at latest doorbell ring ===
+/// === filename of image captured at latest doorbell ring ===
 const String lastRingCaptureFilename = "latest_ring_capture";
 
 
-// === telegram ===
-// --- host url ---
+/// === telegram ===
+/// --- host url ---
 const char* telegramHost = "api.telegram.org"; 
-// --- caption sent to telegram with latest ring capture ---
+/// --- caption sent to telegram with latest ring capture ---
 String captionText = "🔔 Someone's at the door!";
 
 
-// === cloudinary ===
-// --- host url ---
+/// === cloudinary ===
+/// --- host url ---
 const char* cloudinaryHost = "api.cloudinary.com";
 
 
-// === upload window ===
+/// === upload window ===
 const int UPLOAD_START_HOUR = 1;
 const int UPLOAD_END_HOUR   = 4;
 
 
-// === to check if any images left to upload on SD card ===
+/// === to check if any images left to upload on SD card ===
 bool imagesLeftToUpload = true;
 
 
-// === time variables ===
-// --- allowed suveillance duration ---
+/// === time variables ===
+/// --- allowed suveillance duration ---
 const unsigned long surveillancePeriod      = 15000;
 
-// --- time allowed to warm up PIR sensor ---
+/// --- time allowed to warm up PIR sensor ---
 const unsigned long warmUpPeriod            = 20000;
 
-// --- allowed standby duration ---
+/// --- allowed standby duration ---
 const unsigned long allowedStandbyDuration  = 60000;
 
-// --- minimum time to pass since last ring ---
+/// --- minimum time to pass since last ring ---
 const unsigned long timeSinceLastRing       = 2000;

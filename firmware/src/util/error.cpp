@@ -1,28 +1,28 @@
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "error.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "pins.h"
 
-// --- services ---
+/// --- services ---
 #include "telegram.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 
 
-// === error handler ===
+/// === error handler ===
 void error(const String& message, bool fatalError) {
-    // --- when error is fatal ---
+    /// --- when error is fatal ---
     if(fatalError) {
         DBG_PRINT("FATAL ERROR: ");
         DBG_PRINTLN(message);
 
-        // --- attempt Telegram notification ---
+        /// --- attempt Telegram notification ---
         sendMsgToTelegram("FATAL ERROR: " + message);
 
-        // --- infinite blink visual indicator ---
+        /// --- infinite blink visual indicator ---
         pinMode(FLASH_LED_PIN, OUTPUT);
         while(1) {
             digitalWrite(FLASH_LED_PIN, HIGH);
@@ -31,12 +31,12 @@ void error(const String& message, bool fatalError) {
             delay(200);
         }
     }
-    // --- when error is non-fatal ---
+    /// --- when error is non-fatal ---
     else {
         DBG_PRINT("ERROR: ");
         DBG_PRINTLN(message);
 
-        // --- attempt Telegram notification ---
+        /// --- attempt Telegram notification ---
         sendMsgToTelegram("ERROR: " + message);
     }
 }

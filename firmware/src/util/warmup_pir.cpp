@@ -1,25 +1,25 @@
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "warmup_pir.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "settings.h"
 #include "pins.h"
 
-// --- hardware ---
+/// --- hardware ---
 #include "mcp23017.h"
 
-// --- util ---
+/// --- util ---
 #include "wipe_sd_card.h"
 
 
-// === blocking delay to warm up PIR sensor & get stable readings ===
+/// === blocking delay to warm up PIR sensor & get stable readings ===
 void warmUpPIR() {
 
-    // --- time at start of PIR warmup ---
+    /// --- time at start of PIR warmup ---
     unsigned long startMs = millis();
 
-    // --- delay with led blink visual indication ---
+    /// --- delay with led blink visual indication ---
     while (millis() - startMs < warmUpPeriod) {
         mcp.digitalWrite(BLUE_LED_PIN, HIGH);
         deleteAll();
@@ -28,6 +28,6 @@ void warmUpPIR() {
         delay(500);
     }
 
-    // --- reset last action endtime to current time ---
+    /// --- reset last action endtime to current time ---
     lastActionTime = millis();
 }

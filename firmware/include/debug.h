@@ -1,7 +1,7 @@
 #pragma once
 
-// === debug macros ===
-// --- 1 or 0 to turn serial debugging ON or OFF respectively ---
+/// === debug macros ===
+/// --- 1 or 0 to turn serial debugging ON or OFF respectively ---
 #define SERIAL_DEBUG 0
 
 #if SERIAL_DEBUG

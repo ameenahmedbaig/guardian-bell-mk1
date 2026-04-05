@@ -1,42 +1,42 @@
-// === standard headers ===
-// --- HTTP client for REST requests / file download ---
+/// === standard headers ===
+/// --- HTTP client for REST requests / file download ---
 #include <HTTPClient.h>
 
-// --- TLS/SSL client for secure HTTPS connections
+/// --- TLS/SSL client for secure HTTPS connections
 #include <WiFiClientSecure.h>
 
-// --- OTA firmware update handling ---
+/// --- OTA firmware update handling ---
 #include <Update.h>
 
 
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "ota.h"
 
-// --- secrets_example.h for reference ---
+/// --- secrets_example.h for reference ---
 #include "secrets.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "settings.h"
 
-// --- network ---
+/// --- network ---
 #include "wifi.h"
 
-// --- services ---
+/// --- services ---
 #include "telegram.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 #include "error.h"
 
 
-// === WIFI client setup ===
+/// === WIFI client setup ===
 WiFiClientSecure otaClient;
 
 
-// === fetch the latest version of the remote firmware ===
+/// === fetch the latest version of the remote firmware ===
 static String fetchRemoteFirmwareVersion() {
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     otaClient.setInsecure();
     
     HTTPClient http;
@@ -63,9 +63,9 @@ static String fetchRemoteFirmwareVersion() {
 }
 
 
-// === fetch update notes for the latest version of the remote firmware ===
+/// === fetch update notes for the latest version of the remote firmware ===
 static String fetchUpdateNotes() {
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     otaClient.setInsecure();
 
     HTTPClient http;
@@ -93,12 +93,12 @@ static String fetchUpdateNotes() {
 }
 
 
-// === flash firmware OTA ===
+/// === flash firmware OTA ===
 void performFirmwareUpdateOTA(String rmtVersion) {
-    // --- get update notes ---
+    /// --- get update notes ---
     String updateNotes = fetchUpdateNotes();
 
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     otaClient.setInsecure();
     
     HTTPClient http;
@@ -140,12 +140,12 @@ void performFirmwareUpdateOTA(String rmtVersion) {
         http.end();
     }
 
-    // --- notify firmware update sucess via telegram ---
+    /// --- notify firmware update sucess via telegram ---
     sendMsgToTelegram("Firmware updated sucessfully from " + FW_VERSION + " to " + rmtVersion);
 
     delay(1000);
 
-    // --- send firmware update notes via telegram ---
+    /// --- send firmware update notes via telegram ---
     sendMsgToTelegram("GuardianBell " + rmtVersion + ":\n" + updateNotes);
 
     delay(2000);
@@ -156,11 +156,11 @@ void performFirmwareUpdateOTA(String rmtVersion) {
 }
 
 
-// === check for firmware update ===
+/// === check for firmware update ===
 void checkForFirmwareUpdate() {
     DBG_PRINTLN("Checking for firmware update");
 
-    // --- get remote firmware version ---
+    /// --- get remote firmware version ---
     String remoteVersion = fetchRemoteFirmwareVersion();
     if (remoteVersion.length() == 0) {
         error("No remote firmware version available", false);
@@ -172,7 +172,7 @@ void checkForFirmwareUpdate() {
     DBG_PRINT("Remote firmware version = ");
     DBG_PRINTLN(remoteVersion);
 
-    // --- compare local firmware version to remote firmware version ---
+    /// --- compare local firmware version to remote firmware version ---
     if (remoteVersion == FW_VERSION) {
         DBG_PRINTLN("Firmware up to date");
         return;

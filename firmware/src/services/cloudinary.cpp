@@ -1,42 +1,42 @@
-// === standard headers ===
-// --- HTTP client for REST requests / file download ---
+/// === standard headers ===
+/// --- HTTP client for REST requests / file download ---
 #include <HTTPClient.h>
 
 
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "cloudinary.h"
 
-// --- secrets_example.h for reference ---
+/// --- secrets_example.h for reference ---
 #include "secrets.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "settings.h"
 
-// --- network ---
+/// --- network ---
 #include "wifi.h"
 
-// --- utilities ---
+/// --- utilities ---
 #include "debug.h"
 #include "error.h"
 
 
-// === WIFI client setup ===
+/// === WIFI client setup ===
 WiFiClientSecure cloudinaryClient;
  
 
-// === upload a JPEG file to cloudinary ===
+/// === upload a JPEG file to cloudinary ===
 bool uploadImageToCloudinary(File &file, String filename) {
-    // --- skip certificate validation ---
+    /// --- skip certificate validation ---
     cloudinaryClient.setInsecure();
 
-    // --- URL endpoint ---
+    /// --- URL endpoint ---
     String url = "/v1_1/" + String(CLOUDINARY_CLOUD_NAME) + "/image/upload";
 
-    // --- multipart boundary ---
+    /// --- multipart boundary ---
     String boundary = "----ESP32CloudinaryBoundary";
 
-    // --- build multipart body ---
+    /// --- build multipart body ---
     String head =
         "--" + boundary + "\r\n"
         "Content-Disposition: form-data; name=\"upload_preset\"\r\n\r\n" +
@@ -50,13 +50,13 @@ bool uploadImageToCloudinary(File &file, String filename) {
         "Content-Disposition: form-data; name=\"file\"; filename=\"" + filename + "\"\r\n"
         "Content-Type: image/jpeg\r\n\r\n";
 
-    // --- build multipart tail ---
+    /// --- build multipart tail ---
     String tail = "\r\n--" + boundary + "--\r\n";
 
-    // --- determine total size of content ---
+    /// --- determine total size of content ---
     uint32_t totalLength = head.length() + file.size() + tail.length();
 
-    // --- connect to telegram ---
+    /// --- connect to telegram ---
     DBG_PRINTLN("Connecting to " + String(cloudinaryHost));
     if (!cloudinaryClient.connect(cloudinaryHost, 443)) {
         error("Cloudinary connection failed", true);
@@ -64,7 +64,7 @@ bool uploadImageToCloudinary(File &file, String filename) {
         return false;
     }
 
-    // --- send HTTP POST headers ---
+    /// --- send HTTP POST headers ---
     cloudinaryClient.print(
         "POST " + url + " HTTP/1.1\r\n"
         "Host: " + String(cloudinaryHost) + "\r\n"
@@ -73,10 +73,10 @@ bool uploadImageToCloudinary(File &file, String filename) {
         "Connection: close\r\n\r\n"
     );
 
-    // --- send multipart head ---
+    /// --- send multipart head ---
     cloudinaryClient.print(head);
 
-    // --- send file binary ---
+    /// --- send file binary ---
     uint8_t buf[1024];
     DBG_PRINTLN("Uploading JPEG to cloudinary...");
     while (file.available()) {
@@ -84,13 +84,13 @@ bool uploadImageToCloudinary(File &file, String filename) {
         cloudinaryClient.write(buf, n);
     }
 
-    // --- send multipart tail ---
+    /// --- send multipart tail ---
     cloudinaryClient.print(tail);
 
     // -- close file ---
     file.close();
 
-    // --- read cloudinary response ---
+    /// --- read cloudinary response ---
     DBG_PRINTLN("Cloudinary response:");
     while (cloudinaryClient.connected()) {
         String line = cloudinaryClient.readStringUntil('\n');

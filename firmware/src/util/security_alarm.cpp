@@ -1,19 +1,19 @@
-// === standard headers ===
-// --- I2C communication library ---
+/// === standard headers ===
+/// --- I2C communication library ---
 #include <Wire.h>
 
-// === project headers ===
-// --- corresponding header ---
+/// === project headers ===
+/// --- corresponding header ---
 #include "security_alarm.h"
 
-// --- configuration ---
+/// --- configuration ---
 #include "pins.h"
 
-// --- hardware ---
+/// --- hardware ---
 #include "mcp23017.h"
 
 
-// === sound alarm using buzzer ===
+/// === sound alarm using buzzer ===
 void soundAlarm(unsigned long durationMs){
     unsigned long startMs = millis();
 

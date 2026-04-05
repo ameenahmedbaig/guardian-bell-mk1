@@ -1,0 +1,8 @@
+PROJECT_NAME           = "guardian-bell-MK1"
+OUTPUT_DIRECTORY       = docs/generated
+INPUT                  = /firmware
+RECURSIVE              = YES
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+EXTRACT_ALL            = YES
+GENERATE_TREEVIEW      = YES

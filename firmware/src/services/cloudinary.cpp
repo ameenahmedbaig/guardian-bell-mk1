@@ -2,6 +2,9 @@
 // --- HTTP client for REST requests / file download ---
 #include <HTTPClient.h>
 
+// --- ESP-IDF certificate bundle for TLS validation ---
+#include "esp_crt_bundle.h"
+
 
 // === project headers ===
 // --- corresponding header ---
@@ -23,12 +26,18 @@
 
 /// === WIFI client setup ===
 WiFiClientSecure cloudinaryClient;
+
+
+/// === configure TLS with certificate bundle ===
+static void initCloudinaryClientTLS() {
+    cloudinaryClient.setCACertBundle(esp_crt_bundle_attach);
+}
  
 
 /// === upload a JPEG file to cloudinary ===
 bool uploadImageToCloudinary(File &file, String filename) {
-    /// --- skip certificate validation ---
-    cloudinaryClient.setInsecure();
+    /// --- enable TLS certificate validation ---
+    initCloudinaryClientTLS();
 
     /// --- URL endpoint ---
     String url = "/v1_1/" + String(CLOUDINARY_CLOUD_NAME) + "/image/upload";

@@ -1,3 +1,7 @@
+// --- ESP-IDF certificate bundle for TLS validation ---
+#include "esp_crt_bundle.h"
+
+
 // === project headers ===
 // --- corresponding header ---
 #include "mqtt.h"
@@ -13,16 +17,19 @@
 #include "error.h"
 
 
-/// === WIFI client setup ===
-WiFiClient wifiClient;
+/// === WIFI client setup (TLS-encrypted) ===
+WiFiClientSecure mqttWifiClient;
 
 
 /// === MQTT Setup ===
-PubSubClient mqtt(wifiClient);
+PubSubClient mqtt(mqttWifiClient);
 
 
 /// === ensure connection to MQTT  ===
 void ensureMQTT() {
+    /// --- enable TLS certificate validation ---
+    mqttWifiClient.setCACertBundle(esp_crt_bundle_attach);
+
     /// --- attempt to connect for 5 seconds ---
     unsigned long attemptConnection_startTime = millis();
     while (!mqtt.connected() && millis() - attemptConnection_startTime < 5000) {

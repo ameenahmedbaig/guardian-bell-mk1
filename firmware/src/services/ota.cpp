@@ -5,6 +5,9 @@
 // --- TLS/SSL client for secure HTTPS connections
 #include <WiFiClientSecure.h>
 
+// --- ESP-IDF certificate bundle for TLS validation ---
+#include "esp_crt_bundle.h"
+
 // --- OTA firmware update handling ---
 #include <Update.h>
 
@@ -34,11 +37,17 @@
 WiFiClientSecure otaClient;
 
 
+/// === configure TLS with certificate bundle ===
+static void initOtaClientTLS() {
+    otaClient.setCACertBundle(esp_crt_bundle_attach);
+}
+
+
 /// === fetch the latest version of the remote firmware ===
 static String fetchRemoteFirmwareVersion() {
-    /// --- skip certificate validation ---
-    otaClient.setInsecure();
-    
+    /// --- enable TLS certificate validation ---
+    initOtaClientTLS();
+
     HTTPClient http;
     http.begin(otaClient, OTA_VERSION_URL);
     http.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
@@ -65,8 +74,8 @@ static String fetchRemoteFirmwareVersion() {
 
 /// === fetch update notes for the latest version of the remote firmware ===
 static String fetchUpdateNotes() {
-    /// --- skip certificate validation ---
-    otaClient.setInsecure();
+    /// --- enable TLS certificate validation ---
+    initOtaClientTLS();
 
     HTTPClient http;
     http.begin(otaClient, OTA_UPDATE_NOTES_URL);
@@ -98,9 +107,9 @@ void performFirmwareUpdateOTA(String rmtVersion) {
     /// --- get update notes ---
     String updateNotes = fetchUpdateNotes();
 
-    /// --- skip certificate validation ---
-    otaClient.setInsecure();
-    
+    /// --- enable TLS certificate validation ---
+    initOtaClientTLS();
+
     HTTPClient http;
     http.begin(otaClient, OTA_FIRMWARE_URL);
 

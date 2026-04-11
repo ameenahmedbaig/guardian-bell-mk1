@@ -32,7 +32,7 @@ void deleteAll() {
 
         /// --- if button pushed prepare to delete ---
         if (lastState == HIGH && currentState == LOW) {
-            shouldRing = true;
+            shouldDelete = true;
         }
 
         lastState = currentState;
